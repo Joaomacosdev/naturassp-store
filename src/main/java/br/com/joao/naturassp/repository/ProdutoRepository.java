@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
-    public Page<Produto> findAllByCategoria(Categoria categoria, Pageable pageable);
+    public Page<Produto> findAllByCategoriaId(Long id, Pageable pageable);
     public Page<Produto> findAllByDisponivelTrue(Pageable pageable);
     public Page<Produto> findAllByDisponivelAndCategoria(Boolean disponivel, Categoria cat, Pageable pageable);
     public Boolean existsByNomeIgnoreCase(String nome);

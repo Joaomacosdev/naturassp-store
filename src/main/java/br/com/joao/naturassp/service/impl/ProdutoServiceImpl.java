@@ -72,8 +72,12 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Transactional(readOnly = true)
     @Override
-    public PagedModel<EntityModel<ProdutoResponseDTO>> listarPorCategoria(Categoria categoria, Pageable pageable) {
-        Page<ProdutoResponseDTO> page = produtoRepository.findAllByCategoria(categoria ,pageable).map(ProdutoResponseDTO::new);
+    public PagedModel<EntityModel<ProdutoResponseDTO>> listarPorCategoria(Long idCategoria, Pageable pageable) {
+        if (idCategoria == null) {
+            throw new IllegalArgumentException("O ID da categoria não pode ser nulo.");
+        }
+
+        Page<ProdutoResponseDTO> page = produtoRepository.findAllByCategoriaId(idCategoria ,pageable).map(ProdutoResponseDTO::new);
         return assembler.toModel(page, dto -> EntityModel.of(dto, getAllLinks(dto, pageable)));
 
     }
@@ -115,6 +119,8 @@ public class ProdutoServiceImpl implements ProdutoService {
         return EntityModel.of(dto, links);
 
     }
+
+
 
     private Collection<Link> getAllLinks(ProdutoResponseDTO dto, Pageable pageable) {
         return List.of(

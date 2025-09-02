@@ -20,7 +20,7 @@ public interface ProdutoService {
 
     public PagedModel<EntityModel<ProdutoResponseDTO>> listarDisponiveis(Pageable pageable);
 
-    public PagedModel<EntityModel<ProdutoResponseDTO>> listarPorCategoria(Categoria responseDTO, Pageable pageable);
+    public PagedModel<EntityModel<ProdutoResponseDTO>> listarPorCategoria(Long idCategoria, Pageable pageable);
 
     public PagedModel<EntityModel<ProdutoResponseDTO>> listarProdutosIndisponivel(Pageable pageable);
 

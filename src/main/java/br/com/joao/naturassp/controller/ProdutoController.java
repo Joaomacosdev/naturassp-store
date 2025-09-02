@@ -56,9 +56,7 @@ public class ProdutoController {
 
     @GetMapping("/categoria/{id}")
     public ResponseEntity<PagedModel<EntityModel<ProdutoResponseDTO>>> recuperarPorCategoria(@PathVariable(name = "id") Long idCateg, Pageable pageable) {
-        Categoria cat = new Categoria();
-        cat.setId(idCateg);
-        return ResponseEntity.ok(produtoService.listarPorCategoria(cat, pageable));
+        return ResponseEntity.ok(produtoService.listarPorCategoria(idCateg, pageable));
     }
 
     @GetMapping("/disponivel")
@@ -75,7 +73,7 @@ public class ProdutoController {
 
     @GetMapping("/filtro")
     public ResponseEntity<PagedModel<EntityModel<ProdutoResponseDTO>>> findAllByDisponivelAndCategoria(@RequestParam Boolean disponivel, @RequestParam Categoria cat, Pageable pageable) {
-        var produto = produtoService.findAllByDisponivelAndCategoria(true, cat, pageable);
+        var produto = produtoService.findAllByDisponivelAndCategoria(disponivel, cat, pageable);
         return ResponseEntity.ok().body(produto);
     }
 
