@@ -3,7 +3,6 @@ package br.com.joao.naturassp.service;
 import br.com.joao.naturassp.dto.request.CategoriaRequestDTO;
 import br.com.joao.naturassp.dto.request.CategoriaUpdateRequesteDTO;
 import br.com.joao.naturassp.dto.response.CategoriaResponseDTO;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;

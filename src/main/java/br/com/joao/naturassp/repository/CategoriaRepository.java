@@ -6,12 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
 
-     List<Categoria> findByNomeContaining(String palavra);
-     Boolean existsByNomeIgnoreCase(String nome);
+    List<Categoria> findByNomeContaining(String palavra);
+
+    Boolean existsByNomeIgnoreCase(String nome);
 
     Page<Categoria> findByNomeContainingIgnoreCase(String palavraChave, Pageable pageable);
 }

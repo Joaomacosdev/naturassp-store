@@ -23,17 +23,6 @@ public class CategoriaController {
         this.categoriaService = categoriaService;
     }
 
-    @GetMapping
-    public ResponseEntity<PagedModel<EntityModel<CategoriaResponseDTO>>> listarTodasCategoria(Pageable pageable) {
-        var categoria = categoriaService.recuperarTodasCategoria(pageable);
-        return ResponseEntity.ok().body(categoria);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<PagedModel<EntityModel<CategoriaResponseDTO>>> recuperarPorPalavrasChaves(Pageable pageable, String palavraChave) {
-        var categoria = categoriaService.recuperarPorPalavrasChaves(pageable, palavraChave);
-        return ResponseEntity.ok().body(categoria);
-    }
 
     @PostMapping
     public ResponseEntity<EntityModel<CategoriaResponseDTO>> adicionarCategoria(@RequestBody @Valid  CategoriaRequestDTO requestDTO, UriComponentsBuilder uriBuilder) {
@@ -41,6 +30,20 @@ public class CategoriaController {
         var uri = uriBuilder.path("/categoria/{id}").buildAndExpand(categoriaResponse.getContent().id()).toUri();
         return ResponseEntity.created(uri).body(categoriaResponse);
     }
+
+
+    @GetMapping
+    public ResponseEntity<PagedModel<EntityModel<CategoriaResponseDTO>>> listarTodasCategoria(Pageable pageable) {
+        var categoria = categoriaService.recuperarTodasCategoria(pageable);
+        return ResponseEntity.ok().body(categoria);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<PagedModel<EntityModel<CategoriaResponseDTO>>> recuperarPorPalavrasChaves(@RequestParam(name="key") String palavraChave, Pageable pageable) {
+        var categoria = categoriaService.recuperarPorPalavrasChaves(pageable, palavraChave);
+        return ResponseEntity.ok().body(categoria);
+    }
+
 
     @PutMapping
     public ResponseEntity<EntityModel<CategoriaResponseDTO>> alterarCategoria(@RequestBody @Valid CategoriaUpdateRequesteDTO requesteDTO) {

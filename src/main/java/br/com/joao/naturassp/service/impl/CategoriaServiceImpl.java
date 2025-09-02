@@ -104,7 +104,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         return List.of(
                 linkTo(methodOn(CategoriaController.class).adicionarCategoria(null, null)).withRel("create").withType("POST"),
                 linkTo(methodOn(CategoriaController.class).listarTodasCategoria(pageable)).withRel("listAll").withType("GET"),
-                linkTo(methodOn(CategoriaController.class).recuperarPorPalavrasChaves(pageable, dto.nome())).withRel("searchByName").withType("GET"),
+                linkTo(methodOn(CategoriaController.class).recuperarPorPalavrasChaves(dto.nome(), pageable)).withRel("searchByName").withType("GET"),
                 linkTo(methodOn(CategoriaController.class).alterarCategoria(null)).withRel("update").withType("PUT")
         );
     }

@@ -1,9 +1,6 @@
 package br.com.joao.naturassp.infra.exception.handle;
 
-import br.com.joao.naturassp.infra.exception.BadRequestException;
-import br.com.joao.naturassp.infra.exception.DuplicateResourceException;
-import br.com.joao.naturassp.infra.exception.ExceptionResponse;
-import br.com.joao.naturassp.infra.exception.NotFoundException;
+import br.com.joao.naturassp.infra.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -61,6 +58,17 @@ public class CustomEntityResponseHandler {
         );
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(FileStorageException.class)
+    public ResponseEntity<ExceptionResponse> fileStorageException(FileStorageException ex, WebRequest request){
+        ExceptionResponse response = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
