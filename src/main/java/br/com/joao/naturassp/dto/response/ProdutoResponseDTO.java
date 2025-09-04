@@ -11,10 +11,10 @@ public record ProdutoResponseDTO(
         String detalhe,
         String linkFoto,
         BigDecimal preco,
-        Categoria categoria,
-        Boolean disponivel
+        Boolean disponivel,
+        Categoria categoria
         ) {
     public ProdutoResponseDTO(Produto produto) {
-        this(produto.getId(), produto.getNome(), produto.getDetalhe(), produto.getLinkFoto(), produto.getPreco(), produto.getCategoria(), produto.getDisponivel());
+        this(produto.getId(), produto.getNome(), produto.getDetalhe(), produto.getLinkFoto(), produto.getPreco(),  produto.getDisponivel(), produto.getCategoria());
     }
 }

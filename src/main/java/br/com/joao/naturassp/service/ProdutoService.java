@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 
-import java.util.List;
-
 public interface ProdutoService {
 
     public EntityModel<ProdutoResponseDTO> inserirNovoProduto(ProdutoRequestDTO requestDTO);
