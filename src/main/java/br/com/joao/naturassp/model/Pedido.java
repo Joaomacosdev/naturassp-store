@@ -1,5 +1,6 @@
 package br.com.joao.naturassp.model;
 
+import br.com.joao.naturassp.dto.request.PedidoRequestDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -7,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "tbl_pedido")
@@ -16,8 +18,8 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_pedido")
     private Long id;
-    @Column(name = "data_pedido")
-    private LocalDate dataPedido;
+    @Column(name = "data_pedido", nullable = false, updatable = false)
+    private LocalDate dataPedido = LocalDate.now();
     @Column(name = "valor_total")
     private BigDecimal valorTotal;
     @Column(name = "observacoes", length = 500)
@@ -35,6 +37,13 @@ public class Pedido {
     private List<ItemPedido> itensPedidos;
 
     public Pedido() {
+    }
+
+    public Pedido(PedidoRequestDTO requestDTO) {
+        this.dataPedido = LocalDate.now();
+        this.valorTotal = requestDTO.valorTotal();
+        this.observacoes = requestDTO.observacoes();
+        this.status = requestDTO.status();
     }
 
     public Long getId() {

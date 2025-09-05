@@ -1,5 +1,6 @@
 package br.com.joao.naturassp.model;
 
+import br.com.joao.naturassp.dto.request.ItemPedidoRequestDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -23,12 +24,25 @@ public class ItemPedido {
 
     @ManyToOne
     @JoinColumn(name = "id_pedido")
-    @JsonIgnoreProperties("itensPedido")
+    @JsonIgnoreProperties("itensPedidos")
     private Pedido pedido;
 
     @ManyToOne
     @JoinColumn(name = "id_produto")
     private Produto produto;
+
+    public ItemPedido() {
+    }
+
+    public ItemPedido(ItemPedidoRequestDTO itemPedidoRequestDTO) {
+        this.qtdItem = itemPedidoRequestDTO.qtdItem();
+        this.precoUnitario = itemPedidoRequestDTO.precoUnitario();
+    }
+
+    public void calcularPrecoTotal() {
+        this.precoTotal = precoUnitario.multiply(BigDecimal.valueOf(qtdItem));
+    }
+
 
     public Long getNumSeq() {
         return numSeq;
