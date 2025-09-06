@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,46 +43,14 @@ public class PedidoServiceImpl implements PedidoService{
     @Override
     public EntityModel<PedidoResponseDTO> inserirPedido(PedidoRequestDTO requestDTO) {
 
-        Pedido pedido = montarPedido(requestDTO);
-        Cliente cliente = buscarCliente(requestDTO.idCliente());
+        var pedido = new Pedido(requestDTO);
+
+        Cliente cliente = clienteRepository.findById(requestDTO.idCliente())
+                .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
         pedido.setCliente(cliente);
 
-        List<ItemPedido> itensDoPedido = montarItensPedido(pedido, requestDTO.itensPedidos());
-        pedido.setItensPedidos(itensDoPedido);
-
-        pedido.setValorTotal(calcularValorTotal(itensDoPedido));
-
-        pedido = pedidoRepository.save(pedido);
-
-        PedidoResponseDTO pedidoResponseDTO = new PedidoResponseDTO(pedido);
-        return EntityModel.of(pedidoResponseDTO, getAllLinks(pedidoResponseDTO));
-    }
-
-
-
-
-
-
-
-
-
-
-    private Pedido montarPedido(PedidoRequestDTO dto) {
-        Pedido pedido = new Pedido();
-        pedido.setDataPedido(LocalDate.now());
-        pedido.setObservacoes(dto.observacoes());
-        pedido.setStatus(dto.status());
-        return pedido;
-    }
-
-    private Cliente buscarCliente(Long idCliente) {
-        return clienteRepository.findById(idCliente)
-                .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
-    }
-
-    private List<ItemPedido> montarItensPedido(Pedido pedido, List<ItemPedidoRequestDTO> itensDTO) {
         List<ItemPedido> itens = new ArrayList<>();
-        for (ItemPedidoRequestDTO itemDTO : itensDTO) {
+        for (ItemPedidoRequestDTO itemDTO : requestDTO.itensPedidos()) {
             Produto produto = produtoRepository.findById(itemDTO.idProduto())
                     .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
 
@@ -92,23 +59,31 @@ public class PedidoServiceImpl implements PedidoService{
             item.setQtdItem(itemDTO.qtdItem());
             item.setPrecoUnitario(produto.getPreco());
             item.setPedido(pedido);
-            item.setPrecoTotal(produto.getPreco().multiply(BigDecimal.valueOf(itemDTO.qtdItem())));
+            item.setPrecoTotal(item.getPrecoUnitario().multiply(BigDecimal.valueOf(item.getQtdItem())));
+
             itens.add(item);
         }
-        return itens;
-    }
 
-    private BigDecimal calcularValorTotal(List<ItemPedido> itens) {
-        return itens.stream()
+        BigDecimal valorTotal = itens.stream()
                 .map(ItemPedido::getPrecoTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+        pedido.setValorTotal(valorTotal);
+
+        pedido.setItensPedidos(itens);
+
+        pedido =  pedidoRepository.save(pedido);
+
+        var dto = new PedidoResponseDTO(pedido);
+        var links = getAllLinks(dto);
+
+        return EntityModel.of(dto, links);
     }
 
-    private Collection<Link> getAllLinks(PedidoResponseDTO dto) {
+
+
+    private Collection<Link> getAllLinks(PedidoResponseDTO dto){
         return List.of(
-                linkTo(methodOn(PedidoController.class).inserirNovoPedido(null, null))
-                        .withRel("create")
-                        .withType("POST")
+                linkTo(methodOn(PedidoController.class).inserirNovoPedido(null, null)).withRel("create").withType("POST")
         );
     }
 }

@@ -41,7 +41,6 @@ public class Pedido {
 
     public Pedido(PedidoRequestDTO requestDTO) {
         this.dataPedido = LocalDate.now();
-        this.valorTotal = requestDTO.valorTotal();
         this.observacoes = requestDTO.observacoes();
         this.status = requestDTO.status();
     }
