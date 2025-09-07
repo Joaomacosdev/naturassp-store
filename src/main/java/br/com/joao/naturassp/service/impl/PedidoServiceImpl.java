@@ -12,13 +12,13 @@ import br.com.joao.naturassp.repository.ClienteRepository;
 import br.com.joao.naturassp.repository.PedidoRepository;
 import br.com.joao.naturassp.repository.ProdutoRepository;
 import br.com.joao.naturassp.service.PedidoService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,11 +26,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
-public class PedidoServiceImpl implements PedidoService{
+public class PedidoServiceImpl implements PedidoService {
 
-   private final PedidoRepository pedidoRepository;
-   private final ClienteRepository clienteRepository;
-   private final ProdutoRepository produtoRepository;
+    private final PedidoRepository pedidoRepository;
+    private final ClienteRepository clienteRepository;
+    private final ProdutoRepository produtoRepository;
 
     public PedidoServiceImpl(PedidoRepository pedidoRepository, ClienteRepository clienteRepository, ProdutoRepository produtoRepository) {
         this.pedidoRepository = pedidoRepository;
@@ -45,33 +45,20 @@ public class PedidoServiceImpl implements PedidoService{
 
         var pedido = new Pedido(requestDTO);
 
-        Cliente cliente = clienteRepository.findById(requestDTO.idCliente())
-                .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
+        Cliente cliente = clienteRepository.findById(requestDTO.idCliente()).orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
         pedido.setCliente(cliente);
 
-        List<ItemPedido> itens = new ArrayList<>();
-        for (ItemPedidoRequestDTO itemDTO : requestDTO.itensPedidos()) {
-            Produto produto = produtoRepository.findById(itemDTO.idProduto())
-                    .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
 
-            ItemPedido item = new ItemPedido();
-            item.setProduto(produto);
-            item.setQtdItem(itemDTO.qtdItem());
-            item.setPrecoUnitario(produto.getPreco());
-            item.setPedido(pedido);
-            item.setPrecoTotal(item.getPrecoUnitario().multiply(BigDecimal.valueOf(item.getQtdItem())));
-
-            itens.add(item);
-        }
-
-        BigDecimal valorTotal = itens.stream()
-                .map(ItemPedido::getPrecoTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        pedido.setValorTotal(valorTotal);
-
+        // Criar itens
+        List<ItemPedido> itens = criarItensPedido(requestDTO.itensPedidos(), pedido);
         pedido.setItensPedidos(itens);
 
-        pedido =  pedidoRepository.save(pedido);
+        // Calcular total
+        BigDecimal valorTotal = calcularValorTotal(itens);
+        pedido.setValorTotal(valorTotal);
+
+        // Persistir
+        pedido = pedidoRepository.save(pedido);
 
         var dto = new PedidoResponseDTO(pedido);
         var links = getAllLinks(dto);
@@ -80,10 +67,29 @@ public class PedidoServiceImpl implements PedidoService{
     }
 
 
+    private List<ItemPedido> criarItensPedido(List<ItemPedidoRequestDTO> itensDTO, Pedido pedido) {
+        return itensDTO.stream().map(itemDTO -> {
+            Produto produto = produtoRepository.findById(itemDTO.idProduto()).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado: " + itemDTO.idProduto()));
 
-    private Collection<Link> getAllLinks(PedidoResponseDTO dto){
-        return List.of(
-                linkTo(methodOn(PedidoController.class).inserirNovoPedido(null, null)).withRel("create").withType("POST")
-        );
+            ItemPedido item = new ItemPedido();
+
+            item.setProduto(produto);
+            item.setQtdItem(itemDTO.qtdItem());
+            item.setPrecoUnitario(produto.getPreco());
+
+            BigDecimal precoTotal = produto.getPreco().multiply(BigDecimal.valueOf(itemDTO.qtdItem()));
+            item.setPrecoTotal(precoTotal);
+
+            return item;
+        }).toList();
+    }
+
+    private BigDecimal calcularValorTotal(List<ItemPedido> itens) {
+        return itens.stream().map(ItemPedido::getPrecoTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
+    private Collection<Link> getAllLinks(PedidoResponseDTO dto) {
+        return List.of(linkTo(methodOn(PedidoController.class).inserirNovoPedido(null, null)).withRel("create").withType("POST"));
     }
 }

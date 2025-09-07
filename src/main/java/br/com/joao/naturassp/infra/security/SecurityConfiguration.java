@@ -18,7 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-
     private final SecurityFilter securityFilter;
 
     public SecurityConfiguration(SecurityFilter securityFilter) {
@@ -30,11 +29,12 @@ public class SecurityConfiguration {
         return http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> {
-                    req.requestMatchers(HttpMethod.GET, "/produto/**").permitAll();
-                    req.anyRequest().authenticated();
+                    req.requestMatchers(HttpMethod.POST, "/login").permitAll();
+                    req.anyRequest().permitAll();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+
     }
 
     @Bean

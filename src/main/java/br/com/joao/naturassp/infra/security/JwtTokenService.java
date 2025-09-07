@@ -12,14 +12,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @Service
-public class JwtTokenUtil {
+public class JwtTokenService {
 
         public String generateToken(Usuario usuario){
             try {
                 var algorithm = Algorithm.HMAC256("123456");
                 return JWT.create()
                         .withIssuer("naturassp")
-                        .withSubject(usuario.getNomeUsuario())
+                        .withSubject(usuario.getUsername())
                         .withExpiresAt(dataExpiracao(120))
                         .sign(algorithm);
             } catch (JWTCreationException exception) {
