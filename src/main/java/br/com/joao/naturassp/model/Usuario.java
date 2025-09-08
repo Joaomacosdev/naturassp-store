@@ -44,6 +44,15 @@ public class Usuario implements UserDetails {
         return email;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public Usuario setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public String getNome() {
         return nome;
     }
@@ -59,6 +68,24 @@ public class Usuario implements UserDetails {
 
     public Usuario setNomeUsuario(String nomeUsuario) {
         this.nomeUsuario = nomeUsuario;
+        return this;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Usuario setEmail(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public Usuario setSenha(String senha) {
+        this.senha = senha;
         return this;
     }
 

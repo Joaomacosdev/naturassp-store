@@ -23,9 +23,15 @@ public record ClienteRequestDTO(
         String telefone,
         @NotBlank(message = "O CPF é obrigatório")
         String cpf,
+        @NotBlank
+        String nomeUsuario,
+        @NotBlank
+        String senha,
         @NotNull
         @Valid
         EnderecoRequestDTO endereco
+
+
 
 
 ) {

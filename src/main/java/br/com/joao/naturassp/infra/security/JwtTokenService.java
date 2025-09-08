@@ -14,18 +14,31 @@ import java.time.ZoneOffset;
 @Service
 public class JwtTokenService {
 
-        public String generateToken(Usuario usuario){
-            try {
-                var algorithm = Algorithm.HMAC256("123456");
-                return JWT.create()
-                        .withIssuer("naturassp")
-                        .withSubject(usuario.getUsername())
-                        .withExpiresAt(dataExpiracao(120))
-                        .sign(algorithm);
-            } catch (JWTCreationException exception) {
-                throw new RuntimeException("Erro ao gerar token " + exception);
-            }
+    public String generateToken(Usuario usuario) {
+        try {
+            var algorithm = Algorithm.HMAC256("123456");
+            return JWT.create()
+                    .withIssuer("naturassp")
+                    .withSubject(usuario.getUsername())
+                    .withExpiresAt(dataExpiracao(30))
+                    .sign(algorithm);
+        } catch (JWTCreationException exception) {
+            throw new RuntimeException("Erro ao gerar token " + exception);
         }
+    }
+
+    public String generateRefreshToken(Usuario usuario) {
+        try {
+            var algorithm = Algorithm.HMAC256("123456");
+            return JWT.create()
+                    .withIssuer("naturassp")
+                    .withSubject(usuario.getId().toString())
+                    .withExpiresAt(dataExpiracao(120))
+                    .sign(algorithm);
+        } catch (JWTCreationException exception) {
+            throw new RuntimeException("Erro ao gerar token " + exception);
+        }
+    }
 
     public String getSubject(String token) {
         try {
@@ -45,5 +58,7 @@ public class JwtTokenService {
 
     private Instant dataExpiracao(Integer minutos) {
         return LocalDateTime.now().plusMinutes(minutos).toInstant(ZoneOffset.of("-03:00"));
-        }
+    }
+
+
 }

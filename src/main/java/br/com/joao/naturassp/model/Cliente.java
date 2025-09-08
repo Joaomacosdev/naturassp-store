@@ -26,6 +26,10 @@ public class Cliente {
     @Embedded
     private Endereco endereco;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
+    private Usuario usuario;
+
 
     public Cliente() {
     }
