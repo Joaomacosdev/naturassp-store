@@ -36,6 +36,30 @@ public class Endereco {
 
     }
 
+    public void atualizarEndereco(EnderecoRequestDTO endereco) {
+        if (endereco.cepCliente() != null) {
+            this.cepCliente = endereco.cepCliente();
+        }
+        if (endereco.logradouro() != null) {
+            this.logradouro = endereco.logradouro();
+        }
+        if (endereco.numero() != null) {
+            this.numero = endereco.numero();
+        }
+        if (endereco.complemento() != null) {
+            this.complemento = endereco.complemento();
+        }
+        if (endereco.bairro() != null) {
+            this.bairro = endereco.bairro();
+        }
+        if (endereco.cidade() != null) {
+            this.cidade = endereco.cidade();
+        }
+        if (endereco.estado() != null) {
+            this.estado = endereco.estado();
+        }
+    }
+
     public String getCepCliente() {
         return cepCliente;
     }
@@ -98,4 +122,6 @@ public class Endereco {
         this.estado = estado;
         return this;
     }
+
+
 }

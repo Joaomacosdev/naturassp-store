@@ -26,6 +26,10 @@ public class Usuario implements UserDetails {
     @Column(name = "senha", length = 255, nullable = false)
     private String senha;
 
+    @OneToOne(mappedBy = "usuario")
+    private Cliente cliente;
+
+
     public Usuario() {
     }
 

@@ -1,8 +1,10 @@
 package br.com.joao.naturassp.model;
 
 import br.com.joao.naturassp.dto.request.ClienteRequestDTO;
+import br.com.joao.naturassp.dto.request.ClienteUpdateDTO;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -12,7 +14,7 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_cliente")
-    private Long id;
+    private Long idCliente;
     @Column(name = "nome_cliente", length = 100, nullable = false)
     private String nome;
     @Column(name = "email_cliente", length = 100, nullable = false, unique = true)
@@ -22,6 +24,9 @@ public class Cliente {
 
     @Column(name = "cpf_cliente", length = 15)
     private String cpf;
+
+    @Column(name = "data_nasc")
+    private LocalDate dataNasc;
 
     @Embedded
     private Endereco endereco;
@@ -42,12 +47,38 @@ public class Cliente {
         this.endereco = new Endereco(requestDTO.endereco());
     }
 
+    public void atualizar(ClienteUpdateDTO updateDTO) {
+        if (nome != null){
+            this.nome = updateDTO.nome();
+        }
+
+        if (email != null){
+            this.email = updateDTO.email();
+        }
+
+        if (telefone != null){
+            this.telefone = updateDTO.telefone();
+        }
+
+        if (cpf != null){
+            this.cpf = updateDTO.cpf();
+        }
+
+        if (nome != null){
+            this.nome = updateDTO.nome();
+        }
+
+        if (endereco != null){
+            this.endereco.atualizarEndereco(updateDTO.endereco());
+        }
+    }
+
     public Long getId() {
-        return id;
+        return idCliente;
     }
 
     public Cliente setId(Long id) {
-        this.id = id;
+        this.idCliente = id;
         return this;
     }
 
@@ -82,6 +113,15 @@ public class Cliente {
         return cpf;
     }
 
+    public LocalDate getDataNasc() {
+        return dataNasc;
+    }
+
+    public Cliente setDataNasc(LocalDate dataNasc) {
+        this.dataNasc = dataNasc;
+        return this;
+    }
+
     public Cliente setCpf(String cpf) {
         this.cpf = cpf;
         return this;
@@ -96,16 +136,28 @@ public class Cliente {
         return this;
     }
 
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public Cliente setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+        return this;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Cliente cliente = (Cliente) object;
-        return Objects.equals(id, cliente.id);
+        return Objects.equals(idCliente, cliente.idCliente);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(idCliente);
     }
+
+
 }

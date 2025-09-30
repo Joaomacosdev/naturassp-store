@@ -15,6 +15,9 @@ public interface CategoriaService {
     // Este método vai alterar a categoria existente e retorna-la se o update deu certo e nul se deu errado
     public EntityModel<CategoriaResponseDTO> alterarCategoria(CategoriaUpdateRequesteDTO requestDTO);
 
+    public EntityModel<CategoriaResponseDTO> bucarCategoriaId(Long id);
+
+
     // Este método retorna todas as categorias sem filtro
     public PagedModel<EntityModel<CategoriaResponseDTO>> recuperarTodasCategoria(Pageable pageable);
 

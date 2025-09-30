@@ -20,6 +20,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/produto")
+@CrossOrigin("*")
 public class ProdutoController {
 
     private final ProdutoServiceImpl produtoService;
@@ -33,7 +34,7 @@ public class ProdutoController {
     @PostMapping()
     public ResponseEntity<EntityModel<ProdutoResponseDTO>> novoProduto(@RequestBody @Valid ProdutoRequestDTO dto, UriComponentsBuilder uriBuilder) {
         EntityModel<ProdutoResponseDTO> produtoResponse = produtoService.inserirNovoProduto(dto);
-        var uri = uriBuilder.path("/produto/{id}").buildAndExpand(produtoResponse.getContent().id()).toUri();
+        var uri = uriBuilder.path("/produto/{id}").buildAndExpand(produtoResponse.getContent().idProduto()).toUri();
         return ResponseEntity.created(uri).body(produtoResponse);
     }
 
@@ -47,6 +48,12 @@ public class ProdutoController {
         return ResponseEntity.ok().body(new UploadFileResponseDTO(fileName, fileDownloadUri, file.getContentType(), file.getSize()));
     }
 
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EntityModel<ProdutoResponseDTO>> recuperarPorId(@PathVariable Long id) {
+        var produto = produtoService.recuperarPorId(id);
+        return ResponseEntity.ok().body(produto);
+    }
 
     @GetMapping()
     public ResponseEntity<PagedModel<EntityModel<ProdutoResponseDTO>>> listarTodos(Pageable pageable) {
@@ -77,9 +84,21 @@ public class ProdutoController {
         return ResponseEntity.ok().body(produto);
     }
 
-    @PutMapping
-    public ResponseEntity<EntityModel<ProdutoResponseDTO>> alterarProduto(@RequestBody @Valid ProdutoUpdateDTO updateDTO){
-        var produto = produtoService.alterarProduto(updateDTO);
+    @GetMapping("/busca")
+    public ResponseEntity<PagedModel<EntityModel<ProdutoResponseDTO>>> buscarPorPalavraChave(@RequestParam(name = "key") String key,Pageable pageable) {
+        var produto = produtoService.buscarPorPalavrasChave(key, pageable);
+        return ResponseEntity.ok().body(produto);
+    }
+
+    @GetMapping("/destque")
+    public ResponseEntity<PagedModel<EntityModel<ProdutoResponseDTO>>> buscarPorPalavraChave(int dest,Pageable pageable) {
+        var produto = produtoService.listarDestques(dest, pageable);
+        return ResponseEntity.ok().body(produto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EntityModel<ProdutoResponseDTO>> alterarProduto(@PathVariable("id") Long id,@RequestBody @Valid ProdutoUpdateDTO updateDTO){
+        var produto = produtoService.alterarProduto(id,updateDTO);
         return ResponseEntity.ok().body(produto);
     }
 

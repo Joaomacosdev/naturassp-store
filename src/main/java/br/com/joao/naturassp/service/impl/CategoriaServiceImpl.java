@@ -13,6 +13,7 @@ import br.com.joao.naturassp.service.CategoriaService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
@@ -38,17 +39,12 @@ public class CategoriaServiceImpl implements CategoriaService {
         this.assembler = assembler;
     }
 
-    @Transactional(readOnly = false)
+    @Transactional
     @Override
     public EntityModel<CategoriaResponseDTO> inserirNovaCategoria(CategoriaRequestDTO requestDTO) {
 
-        if (requestDTO.nome() == null || requestDTO.nome().isEmpty()) {
-            throw new BadRequestException("Nome deve ser preenchido");
-        }
+        validarCadastroCategoria( null, requestDTO);
 
-        if (categoriaRepository.existsByNomeIgnoreCase(requestDTO.nome().trim())) {
-            throw new DuplicateResourceException("Já existe uma categoria com esse nome");
-        }
 
         var categoria = categoriaRepository.save(new Categoria(requestDTO));
         var dto = new CategoriaResponseDTO(categoria);
@@ -56,21 +52,25 @@ public class CategoriaServiceImpl implements CategoriaService {
         return EntityModel.of(dto, links);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional
     @Override
     public EntityModel<CategoriaResponseDTO> alterarCategoria(CategoriaUpdateRequesteDTO requestDTO) {
         var categoria = categoriaRepository.findById(requestDTO.id())
                 .orElseThrow(() -> new NotFoundException("Categoria com o id:" + requestDTO.id() + "não encontrado"));
 
-        if (requestDTO.nome() == null || requestDTO.nome().isEmpty()) {
-            throw new BadRequestException("Nome deve ser preenchido");
-        }
-
-        if (categoriaRepository.existsByNomeIgnoreCase(requestDTO.nome())) {
-            throw new DuplicateResourceException("Já existe uma categoria com esse nome");
-        }
-
+        validarCadastroCategoria(requestDTO, null);
         categoria.atualizar(requestDTO);
+
+        var dto = new CategoriaResponseDTO(categoria);
+        var links = getAllLinks(dto, Pageable.unpaged());
+        return EntityModel.of(dto, links);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public EntityModel<CategoriaResponseDTO> bucarCategoriaId(Long id) {
+        var categoria = categoriaRepository.findById(id).orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
+
         var dto = new CategoriaResponseDTO(categoria);
         var links = getAllLinks(dto, Pageable.unpaged());
         return EntityModel.of(dto, links);
@@ -87,7 +87,8 @@ public class CategoriaServiceImpl implements CategoriaService {
     @Transactional(readOnly = true)
     @Override
     public PagedModel<EntityModel<CategoriaResponseDTO>> recuperarPorPalavrasChaves(
-            @PageableDefault(size = 10, sort = "nome") Pageable pageable,
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
+            Pageable pageable,
             String palavraChave) {
 
         if (palavraChave == null) {
@@ -98,6 +99,16 @@ public class CategoriaServiceImpl implements CategoriaService {
                 .map(CategoriaResponseDTO::new);
 
         return assembler.toModel(page, dto -> EntityModel.of(dto, getAllLinks(dto, pageable)));
+    }
+
+    private void validarCadastroCategoria(CategoriaUpdateRequesteDTO updateDTO, CategoriaRequestDTO requestDTO){
+        if (requestDTO.nome() == null || requestDTO.nome().isEmpty()) {
+            throw new BadRequestException("Nome deve ser preenchido");
+        }
+
+        if (categoriaRepository.existsByNomeIgnoreCase(requestDTO.nome())) {
+            throw new DuplicateResourceException("Já existe uma categoria com esse nome");
+        }
     }
 
     private Collection<Link> getAllLinks(CategoriaResponseDTO dto, Pageable pageable) {

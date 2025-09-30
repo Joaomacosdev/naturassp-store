@@ -15,6 +15,8 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/categoria")
+@CrossOrigin("*")
+
 public class CategoriaController {
 
     private final CategoriaServiceImpl categoriaService;
@@ -38,11 +40,19 @@ public class CategoriaController {
         return ResponseEntity.ok().body(categoria);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<EntityModel<CategoriaResponseDTO>> buscarCategoriaId(@PathVariable Long id) {
+        var categoria = categoriaService.bucarCategoriaId(id);
+        return ResponseEntity.ok().body(categoria);
+    }
+
     @GetMapping("/search")
     public ResponseEntity<PagedModel<EntityModel<CategoriaResponseDTO>>> recuperarPorPalavrasChaves(@RequestParam(name="key") String palavraChave, Pageable pageable) {
         var categoria = categoriaService.recuperarPorPalavrasChaves(pageable, palavraChave);
         return ResponseEntity.ok().body(categoria);
     }
+
+
 
 
     @PutMapping

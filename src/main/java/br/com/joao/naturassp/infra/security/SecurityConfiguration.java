@@ -30,7 +30,19 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> {
                     req.requestMatchers(HttpMethod.POST, "/login", "/alterar-token").permitAll();
-                    req.anyRequest().authenticated();
+
+
+                    req.requestMatchers(HttpMethod.GET, "/categoria").permitAll();
+                    req.requestMatchers(HttpMethod.GET, "/categoria/search").permitAll();
+                    req.requestMatchers(HttpMethod.GET, "/cliente/*").permitAll();
+                    req.requestMatchers(HttpMethod.GET, "/produto/*").permitAll();
+                    req.requestMatchers(HttpMethod.GET, "/produto/categoria/*").permitAll();
+
+
+                    req.requestMatchers(HttpMethod.POST, "/pedido").permitAll();
+
+
+                    req.anyRequest().permitAll();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

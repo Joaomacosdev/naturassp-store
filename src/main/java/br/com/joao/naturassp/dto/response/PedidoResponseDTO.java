@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record PedidoResponseDTO(
-        Long id,
+        Long idPedido,
         LocalDate dataPedido,
         BigDecimal valorTotal,
         String observacoes,
@@ -19,7 +19,7 @@ public record PedidoResponseDTO(
         List<ItemPedidoResponseDTO> itensPedidos
 ) {
     public PedidoResponseDTO(Pedido pedido) {
-        this(pedido.getId(), pedido.getDataPedido(), pedido.getValorTotal(), pedido.getObservacoes(), pedido.getStatus(), pedido.getCliente(), pedido.getItensPedidos().stream().map(ItemPedidoResponseDTO::new)
+        this(pedido.getId(), pedido.getDataPedido(), pedido.getValorTotal(), pedido.getObservacoes(), pedido.getStatus(),pedido.getCliente(), pedido.getItensPedidos().stream().map(ItemPedidoResponseDTO::new)
                 .toList());
     }
 }

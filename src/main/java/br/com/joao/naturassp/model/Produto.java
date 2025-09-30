@@ -14,7 +14,7 @@ public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_produto", nullable = false, unique = true)
-    private Long id;
+    private Long idProduto;
     @Column(name = "nome_produto", length = 100, nullable = false)
     private String nome;
     @Column(name = "detalhe_produto", length = 500)
@@ -31,6 +31,10 @@ public class Produto {
 
     @Column(name = "disponivel")
     private Boolean disponivel;
+
+    @Column(name = "destaque")
+    private int destaque;
+
 
 
 
@@ -69,11 +73,11 @@ public class Produto {
     }
 
     public Long getId() {
-        return id;
+        return idProduto;
     }
 
     public Produto setId(Long id) {
-        this.id = id;
+        this.idProduto = id;
         return this;
     }
 
@@ -131,23 +135,32 @@ public class Produto {
         return this;
     }
 
+    public int getDestaque() {
+        return destaque;
+    }
+
+    public Produto setDestaque(int destaque) {
+        this.destaque = destaque;
+        return this;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Produto produto = (Produto) object;
-        return Objects.equals(id, produto.id);
+        return Objects.equals(idProduto, produto.idProduto);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(idProduto);
     }
 
     @Override
     public String toString() {
         return "Produto{" +
-                "id=" + id +
+                "id=" + idProduto +
                 ", nome='" + nome + '\'' +
                 ", detalhe='" + detalhe + '\'' +
                 ", linkFoto='" + linkFoto + '\'' +

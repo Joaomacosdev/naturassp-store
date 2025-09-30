@@ -49,15 +49,12 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setCliente(cliente);
 
 
-        // Criar itens
         List<ItemPedido> itens = criarItensPedido(requestDTO.itensPedidos(), pedido);
         pedido.setItensPedidos(itens);
 
-        // Calcular total
         BigDecimal valorTotal = calcularValorTotal(itens);
         pedido.setValorTotal(valorTotal);
 
-        // Persistir
         pedido = pedidoRepository.save(pedido);
 
         var dto = new PedidoResponseDTO(pedido);
@@ -79,6 +76,9 @@ public class PedidoServiceImpl implements PedidoService {
 
             BigDecimal precoTotal = produto.getPreco().multiply(BigDecimal.valueOf(itemDTO.qtdItem()));
             item.setPrecoTotal(precoTotal);
+
+            item.setPedido(pedido);
+
 
             return item;
         }).toList();

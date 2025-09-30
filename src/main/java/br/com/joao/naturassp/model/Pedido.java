@@ -17,7 +17,7 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_pedido")
-    private Long id;
+    private Long idPedido;
     @Column(name = "data_pedido", nullable = false, updatable = false)
     private LocalDate dataPedido = LocalDate.now();
     @Column(name = "valor_total")
@@ -46,11 +46,11 @@ public class Pedido {
     }
 
     public Long getId() {
-        return id;
+        return idPedido;
     }
 
     public Pedido setId(Long id) {
-        this.id = id;
+        this.idPedido = id;
         return this;
     }
 
@@ -113,11 +113,11 @@ public class Pedido {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Pedido pedido = (Pedido) object;
-        return Objects.equals(id, pedido.id);
+        return Objects.equals(idPedido, pedido.idPedido);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(idPedido);
     }
 }
